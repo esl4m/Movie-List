@@ -1,0 +1,25 @@
+version: "3.1"
+
+volumes:
+  db_data:
+    driver: local
+
+services:
+  movies_app:
+    build: .
+    container_name: movies_app
+    tty: true
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      - cache
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./:/app/
+      - ./volumes/logs:/var/log
+
+  cache:
+    image: memcached
+    command: memcached -m 256
