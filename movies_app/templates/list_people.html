@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Studio Ghibli - People</title>
+    </head>
+    <body>
+        <div>
+            <h1>Studio Ghibli - List People</h1>
+        </div>
+
+        {% for person in people %}
+        <div>
+            <h2><a href="{{person.url }}" target="_blank">{{ person.name }}</a></h2>
+            <p>ID: {{ person.id }}</p>
+            <p>Gender: {{ person.gender }}</p>
+            <p>Age: {{ person.age }}</p>
+            <p>Films: {{ person.films }}</p>
+            <p>Eye Color: {{ person.eye_color }}</p>
+            <p>Hair Color: {{ person.hair_color }}</p>
+            <hr/>   
+        </div>
+        {% endfor %}
+    </body>
+</html>

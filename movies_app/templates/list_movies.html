@@ -1,0 +1,24 @@
+<html>
+    <!-- {% now "jS F Y H:i" %} --> 
+    <head>
+        <title>Studio Ghibli - Movies</title>
+    </head>
+    <body>
+        <div>
+            <h1><a href="/">Studio Ghibli - List Movies</a></h1>
+        </div>
+
+        {% for movie in movies %}
+        <div>
+            <h2>{{ movie.title }}</h2>
+            <p>Rate {{ movie.rt_score }}</p>
+            <p>Description {{ movie.description }}</p>
+            <p>Director {{ movie.director }}</p>
+            <p>Producer {{ movie.producer }}</p>
+            <p>Release Date {{ movie.release_date }}</p>
+            <p> * People {{ movie.people }}</p>
+            <hr/>
+        </div>
+        {% endfor %}
+    </body>
+</html>
