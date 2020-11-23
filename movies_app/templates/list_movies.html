@@ -5,7 +5,7 @@
     </head>
     <body>
         <div>
-            <h1><a href="/">Studio Ghibli - List Movies</a></h1>
+            <h1>Studio Ghibli - List Movies</h1>
         </div>
 
         {% for movie in movies %}
@@ -19,6 +19,8 @@
             <p> * People {{ movie.people }}</p>
             <hr/>
         </div>
+        {% empty %}
+            <p>No movies available.</p>
         {% endfor %}
     </body>
 </html>

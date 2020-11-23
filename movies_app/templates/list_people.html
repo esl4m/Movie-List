@@ -18,6 +18,8 @@
             <p>Hair Color: {{ person.hair_color }}</p>
             <hr/>   
         </div>
+        {% empty %}
+            <p>No people available.</p>
         {% endfor %}
     </body>
 </html>
