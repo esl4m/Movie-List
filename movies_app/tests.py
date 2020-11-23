@@ -15,7 +15,7 @@ class ListMoviesTest(TestCase):
         # Test success listing
         self.assertEqual(response.status_code, 200)
         # Test empty object in html
-        # self.assertContains(response,"No movies available.")
+        # self.assertContains(response, "No movies available.")
 
 
 class ListPeopleTest(TestCase):
@@ -32,4 +32,4 @@ class ListPeopleTest(TestCase):
         # Test success listing
         self.assertEqual(response.status_code, 200)
         # Test empty object in html
-        # self.assertContains(response,"No people available.")
+        # self.assertContains(response, "No people available.")
