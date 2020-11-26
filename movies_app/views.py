@@ -1,4 +1,5 @@
 from collections import defaultdict
+from django.core.cache import cache
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 import requests, json
@@ -13,14 +14,15 @@ def movie_people():
     movie_people = defaultdict(list)
 
     if response:
-        # in-case response is not empty, append person name to the array in movie_people dict
+        # in-case response is not empty, 
+        # append person name to the array in movie_people dict
         for person in people:
-    
             for film in person.get("films"):
                 film_id = film.split("/")[-1]
                 movie_people[film_id].append(person.get("name"))
     movie_people = dict(movie_people)
-
+    if movie_people:
+        cache.set("movie-people", movie_people, 60)  # set the movie-people in cache for 1 min
     return movie_people
 
 
@@ -38,6 +40,8 @@ def list_movies(request):
             for film in films:
                 film["people"] = people.get(film.get("id"), [])
             
+            cache.set("movies", films, 60)  # set the movies in cache for 1 min
+
         response.raise_for_status()
 
     except requests.exceptions.HTTPError as err:
@@ -51,6 +55,8 @@ def list_people(request):
     try:
         response = requests.get(base_url + "people",  timeout=5)
         people = response.json()
+        if people:
+            cache.set("list-people", people, 60)  # set the movie-people in cache for 1 min
             
     except requests.exceptions.HTTPError as err:
         raise Http404("No People to display")
