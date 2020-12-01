@@ -2,7 +2,6 @@ from collections import defaultdict
 from django.core.cache import cache
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
-from django.views.decorators.cache import cache_page
 import requests, json
 
 
@@ -25,7 +24,6 @@ def movie_people():
     return movie_people
 
 
-@cache_page(60 * 1)  # 1 min cache & getting the cache from settings by default no changes.
 def list_movies(request):
     """
     Function to list all movies with people names. 
@@ -39,8 +37,7 @@ def list_movies(request):
             people = movie_people()
             for film in films:
                 film["people"] = people.get(film.get("id"), [])
-            
-            cache.set("movies", films, 60)  # set the movies in cache for 1 min
+            cache.set("movies", films, 60)  # set the films in cache key:"movies" --> for 1 min
 
     except requests.exceptions.HTTPError as err:
         raise Http404("No Movies")
@@ -48,17 +45,14 @@ def list_movies(request):
     return render(request, "list_movies.html", {"movies": films} )
 
 
-@cache_page(60 * 1)
 def list_people(request):
     """ Function to list all people from the endpoint /people """
     try:
         people = cache.get('list-people')
-
         if not people:
             response = requests.get(base_url + "people",  timeout=5)
             people = response.json()
-
-            cache.set("list-people", people, 60)  # set the movie-people in cache for 1 min
+            cache.set("list-people", people, 60)  # set the people in cache
             
     except requests.exceptions.HTTPError as err:
         raise Http404("No People to display")
