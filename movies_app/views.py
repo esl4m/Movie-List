@@ -2,6 +2,7 @@ from collections import defaultdict
 from django.core.cache import cache
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.cache import cache_page
 import requests, json
 
 
@@ -25,24 +26,24 @@ def movie_people():
         cache.set("movie-people", movie_people, 60)  # set the movie-people in cache for 1 min
     return movie_people
 
-
+@cache_page(60 * 1)  # 1 min cache & getting the cache from settings by default no changes.
 def list_movies(request):
     """
     Function to list all movies with people names. 
     since the people field is broken, this fucntion calls movie_people to get people from another endpoint.
     """
     try:
-        response = requests.get(base_url + "films",  timeout=5)
-        films = response.json()
-
-        if films:
+        films = cache.get('movies')
+        if not films:
+            response = requests.get(base_url + "films",  timeout=5)
+            films = response.json()
             people = movie_people()
             for film in films:
                 film["people"] = people.get(film.get("id"), [])
             
             cache.set("movies", films, 60)  # set the movies in cache for 1 min
 
-        response.raise_for_status()
+        # response.raise_for_status()
 
     except requests.exceptions.HTTPError as err:
         raise Http404("No Movies")
