@@ -22,9 +22,8 @@ def movie_people():
                 film_id = film.split("/")[-1]
                 movie_people[film_id].append(person.get("name"))
     movie_people = dict(movie_people)
-    if movie_people:
-        cache.set("movie-people", movie_people, 60)  # set the movie-people in cache for 1 min
     return movie_people
+
 
 @cache_page(60 * 1)  # 1 min cache & getting the cache from settings by default no changes.
 def list_movies(request):
@@ -43,20 +42,22 @@ def list_movies(request):
             
             cache.set("movies", films, 60)  # set the movies in cache for 1 min
 
-        # response.raise_for_status()
-
     except requests.exceptions.HTTPError as err:
         raise Http404("No Movies")
     
     return render(request, "list_movies.html", {"movies": films} )
 
 
+@cache_page(60 * 1)
 def list_people(request):
     """ Function to list all people from the endpoint /people """
     try:
-        response = requests.get(base_url + "people",  timeout=5)
-        people = response.json()
-        if people:
+        people = cache.get('list-people')
+
+        if not people:
+            response = requests.get(base_url + "people",  timeout=5)
+            people = response.json()
+
             cache.set("list-people", people, 60)  # set the movie-people in cache for 1 min
             
     except requests.exceptions.HTTPError as err:
